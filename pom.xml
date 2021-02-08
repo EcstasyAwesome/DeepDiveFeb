@@ -10,6 +10,9 @@
 
   <properties>
     <java.version>15</java.version>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <build>
@@ -45,7 +48,7 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <outputDirectory>target</outputDirectory>
               <finalName>${project.artifactId}</finalName>
               <!--              <archive>-->
               <!--                <manifest>-->
