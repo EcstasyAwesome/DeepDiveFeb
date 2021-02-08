@@ -4,6 +4,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
 
+/**
+ * Task w0d0.
+ */
 public class StdBufferedReader implements Closeable {
 
   private final Reader reader;
@@ -24,6 +27,14 @@ public class StdBufferedReader implements Closeable {
     return reader.ready() || ready;
   }
 
+  /**
+   * Reads a line of text. A line is considered to be terminated by any one of a line feed ('\n'), a
+   * carriage return ('\r'), a carriage return followed immediately by a line feed, or by reaching
+   * the end-of-file (EOF).
+   *
+   * @return set of chars
+   * @throws IOException if an I/O error occurs
+   */
   public char[] readLine() throws IOException {
     StringBuilder result = new StringBuilder(this.bufferSize);
 
