@@ -40,13 +40,15 @@ public class StdBufferedReader implements Closeable {
    */
   public char[] readLine() throws IOException {
     while (true) {
-      if (emptyBuffer && reader.ready()) {
-        readBytes = reader.read(buffer, 0, buffer.length);
-        ready = true;
-        lastLineSeparator = 0;
-      } else if (emptyBuffer && !reader.ready()) {
-        ready = false;
-        return storage == null ? new char[]{} : storage;
+      if (emptyBuffer) {
+        if (reader.ready()) {
+          readBytes = reader.read(buffer, 0, buffer.length);
+          ready = true;
+          lastLineSeparator = 0;
+        } else {
+          ready = false;
+          return storage == null ? new char[]{} : storage;
+        }
       }
       for (var to = lastLineSeparator; to < readBytes; to++) {
         if (buffer[to] == '\n') {
