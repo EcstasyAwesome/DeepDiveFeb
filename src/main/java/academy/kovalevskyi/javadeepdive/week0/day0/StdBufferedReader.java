@@ -10,17 +10,20 @@ import java.io.Reader;
 public class StdBufferedReader implements Closeable {
 
   private final Reader reader;
-  private final int bufferSize;
   private boolean ready;
+  private boolean emptyBuffer = true;
+  private final char[] buffer;
+  private char[] storage;
+  private int readBytes;
+  private int lastLineSeparator;
 
   public StdBufferedReader(Reader reader, int bufferSize) {
     this.reader = reader;
-    this.bufferSize = bufferSize;
+    this.buffer = new char[bufferSize];
   }
 
   public StdBufferedReader(Reader reader) {
-    this.reader = reader;
-    this.bufferSize = 100;
+    this(reader, 1024);
   }
 
   public boolean hasNext() throws IOException {
@@ -36,16 +39,56 @@ public class StdBufferedReader implements Closeable {
    * @throws IOException if an I/O error occurs
    */
   public char[] readLine() throws IOException {
-    StringBuilder result = new StringBuilder(this.bufferSize);
-
-    while (ready = reader.ready()) {
-      char symbol = (char) reader.read();
-      if (symbol == '\n') {
-        return result.toString().toCharArray();
+    while (true) {
+      if (emptyBuffer && reader.ready()) {
+        readBytes = reader.read(buffer, 0, buffer.length);
+        ready = true;
+        lastLineSeparator = 0;
+      } else if (emptyBuffer && !reader.ready()) {
+        ready = false;
+        return storage == null ? new char[]{} : storage;
       }
-      result.append(symbol);
+      for (var to = lastLineSeparator; to < readBytes; to++) {
+        if (buffer[to] == '\n') {
+          final var tmpLastLineSeparator = lastLineSeparator;
+          lastLineSeparator = to + 1;
+          final var tmpArray = copyArray(buffer, tmpLastLineSeparator, to);
+          if (storage == null) {
+            if (to != readBytes - 1) {
+              emptyBuffer = false;
+            }
+            return tmpArray;
+          } else {
+            final var tmpStorage = storage;
+            storage = null;
+            if (to != readBytes - 1) {
+              emptyBuffer = false;
+            }
+            return mergeArray(tmpStorage, tmpArray, tmpArray.length);
+          }
+        }
+      }
+      emptyBuffer = true;
+      var tmpArray = copyArray(buffer, lastLineSeparator, readBytes);
+      if (storage == null) {
+        storage = tmpArray;
+      } else {
+        storage = mergeArray(storage, tmpArray, tmpArray.length);
+      }
     }
-    return result.toString().toCharArray();
+  }
+
+  private char[] copyArray(final char[] buffer, final int from, final int to) {
+    final var result = new char[to - from];
+    System.arraycopy(buffer, from, result, 0, result.length);
+    return result;
+  }
+
+  private char[] mergeArray(final char[] storage, final char[] buffer, final int realBufferSize) {
+    final var result = new char[storage.length + realBufferSize];
+    System.arraycopy(storage, 0, result, 0, storage.length);
+    System.arraycopy(buffer, 0, result, storage.length, realBufferSize);
+    return result;
   }
 
   public void close() throws IOException {
