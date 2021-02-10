@@ -3,6 +3,7 @@ package academy.kovalevskyi.javadeepdive.week0.day0;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Objects;
 
 /**
  * Task w0d0.
@@ -17,7 +18,14 @@ public class StdBufferedReader implements Closeable {
   private int readBytes;
   private int lastLineSeparator;
 
+  /**
+   * Base initialization of StdBufferedReader.
+   *
+   * @param reader     some reader
+   * @param bufferSize size of buffer
+   */
   public StdBufferedReader(Reader reader, int bufferSize) {
+    Objects.requireNonNull(reader);
     if (bufferSize <= 1) {
       throw new IllegalArgumentException();
     }
@@ -69,13 +77,13 @@ public class StdBufferedReader implements Closeable {
             if (to != readBytes - 1) {
               emptyBuffer = false;
             }
-            return mergeArray(tmpStorage, tmpArray, tmpArray.length);
+            return mergeArray(tmpStorage, tmpArray);
           }
         }
       }
       emptyBuffer = true;
       var tmpArray = copyArray(buffer, lastLineSeparator, readBytes);
-      storage = storage == null ? tmpArray : mergeArray(storage, tmpArray, tmpArray.length);
+      storage = storage == null ? tmpArray : mergeArray(storage, tmpArray);
     }
   }
 
@@ -85,10 +93,10 @@ public class StdBufferedReader implements Closeable {
     return result;
   }
 
-  private char[] mergeArray(final char[] storage, final char[] buffer, final int realBufferSize) {
-    final var result = new char[storage.length + realBufferSize];
+  private char[] mergeArray(final char[] storage, final char[] buffer) {
+    final var result = new char[storage.length + buffer.length];
     System.arraycopy(storage, 0, result, 0, storage.length);
-    System.arraycopy(buffer, 0, result, storage.length, realBufferSize);
+    System.arraycopy(buffer, 0, result, storage.length, buffer.length);
     return result;
   }
 
