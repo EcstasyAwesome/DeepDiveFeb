@@ -75,11 +75,7 @@ public class StdBufferedReader implements Closeable {
       }
       emptyBuffer = true;
       var tmpArray = copyArray(buffer, lastLineSeparator, readBytes);
-      if (storage == null) {
-        storage = tmpArray;
-      } else {
-        storage = mergeArray(storage, tmpArray, tmpArray.length);
-      }
+      storage = storage == null ? tmpArray : mergeArray(storage, tmpArray, tmpArray.length);
     }
   }
 
