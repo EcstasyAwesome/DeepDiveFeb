@@ -18,6 +18,9 @@ public class StdBufferedReader implements Closeable {
   private int lastLineSeparator;
 
   public StdBufferedReader(Reader reader, int bufferSize) {
+    if (bufferSize <= 1) {
+      throw new IllegalArgumentException();
+    }
     this.reader = reader;
     this.buffer = new char[bufferSize];
   }
