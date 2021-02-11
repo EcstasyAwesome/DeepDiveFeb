@@ -17,7 +17,7 @@ public class SelectRequest extends AbstractRequest<String[][]> {
 
   @Override
   protected String[][] execute() throws RequestException {
-    final var selected = select(selector);
+    final var selected = selector == null ? csv.values() : select(selector);
     final var columns = columns();
     final var result = new String[selected.length][];
     for (var index = 0; index < result.length; index++) {
@@ -66,7 +66,6 @@ public class SelectRequest extends AbstractRequest<String[][]> {
     public SelectRequest build() {
       Objects.requireNonNull(csv);
       Objects.requireNonNull(columns);
-      Objects.requireNonNull(selector);
       return new SelectRequest(csv, selector, columns);
     }
   }
