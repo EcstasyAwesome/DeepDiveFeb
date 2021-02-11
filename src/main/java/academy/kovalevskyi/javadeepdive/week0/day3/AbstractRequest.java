@@ -56,4 +56,12 @@ public abstract class AbstractRequest<T> {
         })
         .toArray(String[][]::new);
   }
+
+  protected String[][] delete(final Selector selector) throws RequestException {
+    final var column = getColumnId(selector.fieldName());
+    return Stream
+        .of(csv.values())
+        .filter(entry -> !entry[column].equals(selector.value()))
+        .toArray(String[][]::new);
+  }
 }
