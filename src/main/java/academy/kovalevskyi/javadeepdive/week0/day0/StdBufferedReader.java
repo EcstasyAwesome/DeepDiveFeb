@@ -63,27 +63,31 @@ public class StdBufferedReader implements Closeable {
       }
       for (var to = lastLineSeparator; to < readBytes; to++) {
         if (buffer[to] == '\n') {
-          final var tmpLastLineSeparator = lastLineSeparator;
-          lastLineSeparator = to + 1;
-          final var tmpArray = copyArray(buffer, tmpLastLineSeparator, to);
-          if (storage == null) {
-            if (to != readBytes - 1) {
-              emptyBuffer = false;
-            }
-            return tmpArray;
-          } else {
-            final var tmpStorage = storage;
-            storage = null;
-            if (to != readBytes - 1) {
-              emptyBuffer = false;
-            }
-            return mergeArray(tmpStorage, tmpArray);
-          }
+          return prepareLine(to);
         }
       }
       emptyBuffer = true;
       var tmpArray = copyArray(buffer, lastLineSeparator, readBytes);
       storage = storage == null ? tmpArray : mergeArray(storage, tmpArray);
+    }
+  }
+
+  private char[] prepareLine(final int to) {
+    final var tmpLastLineSeparator = lastLineSeparator;
+    lastLineSeparator = to + 1;
+    final var tmpArray = copyArray(buffer, tmpLastLineSeparator, to);
+    if (storage == null) {
+      if (to != readBytes - 1) {
+        emptyBuffer = false;
+      }
+      return tmpArray;
+    } else {
+      final var tmpStorage = storage;
+      storage = null;
+      if (to != readBytes - 1) {
+        emptyBuffer = false;
+      }
+      return mergeArray(tmpStorage, tmpArray);
     }
   }
 
