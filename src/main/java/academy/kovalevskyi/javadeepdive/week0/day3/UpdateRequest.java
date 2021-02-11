@@ -2,6 +2,7 @@ package academy.kovalevskyi.javadeepdive.week0.day3;
 
 import academy.kovalevskyi.javadeepdive.week0.day2.CSV;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class UpdateRequest extends AbstractRequest<CSV> {
 
@@ -16,7 +17,16 @@ public class UpdateRequest extends AbstractRequest<CSV> {
 
   @Override
   protected CSV execute() throws RequestException {
-    var result = update(updateToSelector, whereSelector);
+    final var whereColumn = getColumnId(whereSelector.fieldName());
+    final var targetColumn = getColumnId(updateToSelector.fieldName());
+    var result = Stream
+        .of(csv.values())
+        .peek(entry -> {
+          if (entry[whereColumn].equals(whereSelector.value())) {
+            entry[targetColumn] = updateToSelector.value();
+          }
+        })
+        .toArray(String[][]::new);
     return new CSV.Builder().header(csv.header()).values(result).build();
   }
 

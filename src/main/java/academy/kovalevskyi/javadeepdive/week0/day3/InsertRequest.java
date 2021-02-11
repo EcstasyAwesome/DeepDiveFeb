@@ -14,7 +14,10 @@ public class InsertRequest extends AbstractRequest<CSV> {
 
   @Override
   protected CSV execute() {
-    return new CSV.Builder().header(csv.header()).values(insert(entry)).build();
+    final var result = new String[csv.values().length + 1][];
+    System.arraycopy(csv.values(), 0, result, 0, csv.values().length);
+    result[result.length - 1] = entry;
+    return new CSV.Builder().header(csv.header()).values(result).build();
   }
 
   public static class Builder {

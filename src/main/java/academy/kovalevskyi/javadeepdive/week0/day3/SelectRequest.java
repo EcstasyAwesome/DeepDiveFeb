@@ -3,6 +3,7 @@ package academy.kovalevskyi.javadeepdive.week0.day3;
 import academy.kovalevskyi.javadeepdive.week0.day2.CSV;
 import java.util.Objects;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SelectRequest extends AbstractRequest<String[][]> {
 
@@ -22,6 +23,18 @@ public class SelectRequest extends AbstractRequest<String[][]> {
     final var result = new String[selected.length][];
     for (var index = 0; index < result.length; index++) {
       result[index] = reduce(selected[index], columns);
+    }
+    return result;
+  }
+
+  private String[][] select(final Selector selector) throws RequestException {
+    final var column = getColumnId(selector.fieldName());
+    final var result = Stream
+        .of(csv.values())
+        .filter(entry -> entry[column].equals(selector.value()))
+        .toArray(String[][]::new);
+    if (result.length == 0) {
+      throw new RequestException("Required entries have not been found!");
     }
     return result;
   }

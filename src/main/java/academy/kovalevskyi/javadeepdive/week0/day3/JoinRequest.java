@@ -16,8 +16,13 @@ public class JoinRequest extends AbstractRequest<CSV> {
 
   @Override
   protected CSV execute() throws RequestException {
+    if (!on.withHeader() || !csv.withHeader() || on.values().length != csv.values().length) {
+      throw new IllegalArgumentException();
+    }
+
     return null;
   }
+
 
   public static class Builder {
 

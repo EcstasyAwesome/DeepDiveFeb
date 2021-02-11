@@ -24,44 +24,4 @@ public abstract class AbstractRequest<T> {
     }
     throw new RequestException("Csv field has not been found!");
   }
-
-  protected String[][] insert(final String[] entry) {
-    final var result = new String[csv.values().length + 1][];
-    System.arraycopy(csv.values(), 0, result, 0, csv.values().length);
-    result[result.length - 1] = entry;
-    return result;
-  }
-
-  protected String[][] select(final Selector selector) throws RequestException {
-    final var column = getColumnId(selector.fieldName());
-    final var result = Stream
-        .of(csv.values())
-        .filter(entry -> entry[column].equals(selector.value()))
-        .toArray(String[][]::new);
-    if (result.length == 0) {
-      throw new RequestException("Required entries have not been found!");
-    }
-    return result;
-  }
-
-  protected String[][] update(final Selector target, final Selector where) throws RequestException {
-    final var whereColumn = getColumnId(where.fieldName());
-    final var targetColumn = getColumnId(target.fieldName());
-    return Stream
-        .of(csv.values())
-        .peek(entry -> {
-          if (entry[whereColumn].equals(where.value())) {
-            entry[targetColumn] = target.value();
-          }
-        })
-        .toArray(String[][]::new);
-  }
-
-  protected String[][] delete(final Selector selector) throws RequestException {
-    final var column = getColumnId(selector.fieldName());
-    return Stream
-        .of(csv.values())
-        .filter(entry -> !entry[column].equals(selector.value()))
-        .toArray(String[][]::new);
-  }
 }
