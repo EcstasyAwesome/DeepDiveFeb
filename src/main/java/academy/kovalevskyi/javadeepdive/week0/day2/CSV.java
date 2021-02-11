@@ -33,7 +33,7 @@ public record CSV(String[] header, String[][] values) {
   }
 
   public boolean withHeader() {
-    return Objects.nonNull(header);
+    return Objects.nonNull(header) && header.length > 0;
   }
 
   @Override
@@ -48,5 +48,4 @@ public record CSV(String[] header, String[][] values) {
   public int hashCode() {
     return Objects.hash(header, values);
   }
-
 }

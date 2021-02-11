@@ -35,20 +35,22 @@ public class CSVHelper {
       throws IOException {
     final var result = new CSV.Builder();
     final var entries = new ArrayList<String[]>();
-    String headerTemplate = String.format("^name%1$cbirthday_year%1$ccomment$", delimiter);
-    String entryTemplate = String.format("^.*%1$c.*%1$c.*$", delimiter);
     try (final var buffReader = new StdBufferedReader(reader)) {
+      var readHeader = false;
       while (buffReader.hasNext()) {
         var text = String.valueOf(buffReader.readLine());
-        if (withHeader && text.matches(headerTemplate)) {
+        if (text.trim().isEmpty()) {
+          continue;
+        }
+        if (withHeader && !readHeader) {
+          readHeader = true;
           result.header(text.split(String.valueOf(delimiter)));
-        } else if (text.matches(entryTemplate)) {
+        } else {
           entries.add(text.split(String.valueOf(delimiter)));
         }
       }
-      result.values(entries.toArray(String[][]::new));
     }
-    return result.build();
+    return result.values(entries.toArray(String[][]::new)).build();
   }
 
   /**
@@ -62,14 +64,15 @@ public class CSVHelper {
   public static void writeCsv(Writer writer, CSV csv, char delimiter) throws IOException {
     try (writer) {
       if (csv.withHeader()) {
-        writer.write(String.join(String.valueOf(delimiter), csv.header()));
-        writer.write('\n');
+        writer.write(prepareLine(csv.header(), delimiter));
       }
       for (var entry : csv.values()) {
-        writer.write(String.join(String.valueOf(delimiter), entry));
-        writer.write('\n');
+        writer.write(prepareLine(entry, delimiter));
       }
-      writer.flush();
     }
+  }
+
+  private static String prepareLine(final String[] array, final char delimiter) {
+    return String.format("%s\n", String.join(String.valueOf(delimiter), array));
   }
 }
