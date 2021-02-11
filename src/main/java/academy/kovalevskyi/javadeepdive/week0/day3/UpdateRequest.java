@@ -16,7 +16,8 @@ public class UpdateRequest extends AbstractRequest<CSV> {
 
   @Override
   protected CSV execute() throws RequestException {
-    return null;
+    var result = update(updateToSelector, whereSelector);
+    return new CSV.Builder().header(csv.header()).values(result).build();
   }
 
   public static class Builder {

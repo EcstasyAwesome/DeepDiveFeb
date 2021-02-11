@@ -43,4 +43,17 @@ public abstract class AbstractRequest<T> {
     }
     return result;
   }
+
+  protected String[][] update(final Selector target, final Selector where) throws RequestException {
+    final var whereColumn = getColumnId(where.fieldName());
+    final var targetColumn = getColumnId(target.fieldName());
+    return Stream
+        .of(csv.values())
+        .peek(entry -> {
+          if (entry[whereColumn].equals(where.value())) {
+            entry[targetColumn] = target.value();
+          }
+        })
+        .toArray(String[][]::new);
+  }
 }
