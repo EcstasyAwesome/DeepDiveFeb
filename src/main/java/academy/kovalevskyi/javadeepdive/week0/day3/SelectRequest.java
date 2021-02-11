@@ -42,6 +42,8 @@ public class SelectRequest extends AbstractRequest<String[][]> {
 
     public SelectRequest build() {
       Objects.requireNonNull(csv);
+      Objects.requireNonNull(columns);
+      Objects.requireNonNull(selector);
       return new SelectRequest(csv, selector, columns);
     }
   }

@@ -1,6 +1,7 @@
 package academy.kovalevskyi.javadeepdive.week0.day3;
 
 import academy.kovalevskyi.javadeepdive.week0.day2.CSV;
+import java.util.Objects;
 
 public class UpdateRequest extends AbstractRequest<CSV> {
 
@@ -40,6 +41,9 @@ public class UpdateRequest extends AbstractRequest<CSV> {
     }
 
     public UpdateRequest build() {
+      Objects.requireNonNull(whereSelector);
+      Objects.requireNonNull(updateSelector);
+      Objects.requireNonNull(csv);
       return new UpdateRequest(csv, whereSelector, updateSelector);
     }
   }

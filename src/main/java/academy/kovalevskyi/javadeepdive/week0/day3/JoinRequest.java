@@ -1,6 +1,7 @@
 package academy.kovalevskyi.javadeepdive.week0.day3;
 
 import academy.kovalevskyi.javadeepdive.week0.day2.CSV;
+import java.util.Objects;
 
 public class JoinRequest extends AbstractRequest<CSV> {
 
@@ -40,6 +41,9 @@ public class JoinRequest extends AbstractRequest<CSV> {
     }
 
     public JoinRequest build() {
+      Objects.requireNonNull(from);
+      Objects.requireNonNull(on);
+      Objects.requireNonNull(by);
       return new JoinRequest(from, on, by);
     }
   }
