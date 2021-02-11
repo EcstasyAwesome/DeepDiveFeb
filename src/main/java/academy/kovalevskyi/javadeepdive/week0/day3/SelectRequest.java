@@ -2,6 +2,7 @@ package academy.kovalevskyi.javadeepdive.week0.day3;
 
 import academy.kovalevskyi.javadeepdive.week0.day2.CSV;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class SelectRequest extends AbstractRequest<String[][]> {
 
@@ -16,7 +17,29 @@ public class SelectRequest extends AbstractRequest<String[][]> {
 
   @Override
   protected String[][] execute() throws RequestException {
-    return null;
+    final var selected = select(selector);
+    final var columns = columns();
+    final var result = new String[selected.length][];
+    for (var index = 0; index < result.length; index++) {
+      result[index] = reduce(selected[index], columns);
+    }
+    return result;
+  }
+
+  private int[] columns() throws RequestException {
+    final var result = new int[columns.length];
+    for (var index = 0; index < result.length; index++) {
+      result[index] = getColumnId(columns[index]);
+    }
+    return result;
+  }
+
+  private String[] reduce(final String[] value, final int[] columns) {
+    final var result = new String[columns.length];
+    IntStream
+        .range(0, columns.length)
+        .forEach(index -> result[index] = value[columns[index]]);
+    return result;
   }
 
   public static class Builder {

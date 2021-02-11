@@ -5,17 +5,16 @@ import java.util.Objects;
 
 public class InsertRequest extends AbstractRequest<CSV> {
 
-  private final String[] entries;
+  private final String[] entry;
 
-  private InsertRequest(CSV csv, String[] entries) {
+  private InsertRequest(CSV csv, String[] entry) {
     super(csv);
-    this.entries = entries;
+    this.entry = entry;
   }
 
   @Override
   protected CSV execute() {
-    final var entries = insert(csv.values(), this.entries);
-    return new CSV.Builder().header(csv.header()).values(entries).build();
+    return new CSV.Builder().header(csv.header()).values(insert(entry)).build();
   }
 
   public static class Builder {
