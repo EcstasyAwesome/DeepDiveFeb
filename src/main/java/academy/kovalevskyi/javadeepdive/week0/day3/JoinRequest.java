@@ -86,7 +86,7 @@ public class JoinRequest extends AbstractRequest<CSV> {
       Objects.requireNonNull(from);
       Objects.requireNonNull(on);
       Objects.requireNonNull(by);
-      return new JoinRequest(from, on, by); // TODO swap from and on after test has been changed
+      return new JoinRequest(on, from, by);
     }
   }
 
