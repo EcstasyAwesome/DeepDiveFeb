@@ -14,7 +14,7 @@ public class DeleteRequest extends AbstractRequest<CSV> {
   }
 
   @Override
-  protected CSV execute() throws RequestException {
+  public CSV execute() throws RequestException {
     final var column = getColumnId(csv, selector.fieldName());
     var result = Stream
         .of(csv.values())

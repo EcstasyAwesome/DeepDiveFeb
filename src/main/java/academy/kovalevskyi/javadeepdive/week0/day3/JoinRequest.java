@@ -18,7 +18,7 @@ public class JoinRequest extends AbstractRequest<CSV> {
   }
 
   @Override
-  protected CSV execute() throws RequestException {
+  public CSV execute() throws RequestException {
     if (!from.withHeader() || !csv.withHeader() || from.values().length != csv.values().length) {
       throw new IllegalArgumentException();
     }
@@ -45,12 +45,6 @@ public class JoinRequest extends AbstractRequest<CSV> {
     return result;
   }
 
-  private void checkExistingColumn(final List<String> header) throws RequestException {
-    if (!header.contains(by)) {
-      throw new RequestException("Common field is absent!");
-    }
-  }
-
   private static String[] join(final String[] target, final String[] from, final int[] columns) {
     final var result = new String[target.length + columns.length];
     System.arraycopy(target, 0, result, 0, target.length);
@@ -59,6 +53,12 @@ public class JoinRequest extends AbstractRequest<CSV> {
       result[resultIndex++] = from[index];
     }
     return result;
+  }
+
+  private void checkExistingColumn(final List<String> header) throws RequestException {
+    if (!header.contains(by)) {
+      throw new RequestException("Common field is absent!");
+    }
   }
 
   public static class Builder {

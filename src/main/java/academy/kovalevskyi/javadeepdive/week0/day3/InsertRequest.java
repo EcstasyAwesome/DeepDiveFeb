@@ -13,7 +13,7 @@ public class InsertRequest extends AbstractRequest<CSV> {
   }
 
   @Override
-  protected CSV execute() {
+  public CSV execute() {
     final var result = new String[csv.values().length + 1][];
     System.arraycopy(csv.values(), 0, result, 0, csv.values().length);
     result[result.length - 1] = entry;
