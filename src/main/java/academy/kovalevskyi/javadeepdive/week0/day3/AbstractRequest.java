@@ -13,7 +13,7 @@ public abstract class AbstractRequest<T> {
 
   protected abstract T execute() throws RequestException;
 
-  protected int getColumnId(final String field) throws RequestException {
+  protected int getColumnId(final CSV csv, final String field) throws RequestException {
     if (!csv.withHeader()) {
       throw new RequestException("Csv without header!");
     }

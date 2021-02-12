@@ -19,7 +19,8 @@ public class JoinRequest extends AbstractRequest<CSV> {
     if (!on.withHeader() || !csv.withHeader() || on.values().length != csv.values().length) {
       throw new IllegalArgumentException();
     }
-
+    final var csvColumn = getColumnId(csv, by);
+    final var onColumn = getColumnId(on, by);
     return null;
   }
 

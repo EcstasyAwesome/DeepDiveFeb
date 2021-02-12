@@ -28,7 +28,7 @@ public class SelectRequest extends AbstractRequest<String[][]> {
   }
 
   private String[][] select(final Selector selector) throws RequestException {
-    final var column = getColumnId(selector.fieldName());
+    final var column = getColumnId(csv, selector.fieldName());
     final var result = Stream
         .of(csv.values())
         .filter(entry -> entry[column].equals(selector.value()))
@@ -42,7 +42,7 @@ public class SelectRequest extends AbstractRequest<String[][]> {
   private int[] columns() throws RequestException {
     final var result = new int[columns.length];
     for (var index = 0; index < result.length; index++) {
-      result[index] = getColumnId(columns[index]);
+      result[index] = getColumnId(csv, columns[index]);
     }
     return result;
   }

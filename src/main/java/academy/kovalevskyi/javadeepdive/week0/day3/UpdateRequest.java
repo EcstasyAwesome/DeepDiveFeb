@@ -17,8 +17,8 @@ public class UpdateRequest extends AbstractRequest<CSV> {
 
   @Override
   protected CSV execute() throws RequestException {
-    final var whereColumn = getColumnId(whereSelector.fieldName());
-    final var targetColumn = getColumnId(updateToSelector.fieldName());
+    final var whereColumn = getColumnId(csv, whereSelector.fieldName());
+    final var targetColumn = getColumnId(csv, updateToSelector.fieldName());
     var result = Stream
         .of(csv.values())
         .peek(entry -> {
