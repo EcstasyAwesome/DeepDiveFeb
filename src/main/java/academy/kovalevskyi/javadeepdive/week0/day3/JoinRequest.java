@@ -8,25 +8,25 @@ import java.util.stream.IntStream;
 
 public class JoinRequest extends AbstractRequest<CSV> {
 
-  private final CSV from;
+  private final CSV on;
   private final String by;
 
-  private JoinRequest(CSV on, CSV from, String by) {
-    super(on);
-    this.from = from;
+  private JoinRequest(CSV from, CSV on, String by) {
+    super(from);
+    this.on = on;
     this.by = by;
   }
 
   @Override
   public CSV execute() throws RequestException {
-    if (!from.withHeader() || !csv.withHeader() || from.values().length != csv.values().length) {
+    if (!on.withHeader() || !csv.withHeader() || on.values().length != csv.values().length) {
       throw new IllegalArgumentException();
     }
     final var columns = uniqueColumns();
-    var header = join(csv.header(), from.header(), columns);
+    var header = join(csv.header(), on.header(), columns);
     var values = IntStream
         .range(0, csv.values().length)
-        .mapToObj(index -> join(csv.values()[index], from.values()[index], columns))
+        .mapToObj(index -> join(csv.values()[index], on.values()[index], columns))
         .toArray(String[][]::new);
     return new CSV.Builder().header(header).values(values).build();
   }
@@ -34,10 +34,10 @@ public class JoinRequest extends AbstractRequest<CSV> {
   private int[] uniqueColumns() throws RequestException {
     final var csvHeader = Arrays.asList(csv.header());
     checkExistingColumn(csvHeader);
-    checkExistingColumn(Arrays.asList(from.header()));
+    checkExistingColumn(Arrays.asList(on.header()));
     final var result = IntStream
-        .range(0, from.header().length)
-        .dropWhile(index -> csvHeader.contains(from.header()[index]))
+        .range(0, on.header().length)
+        .dropWhile(index -> csvHeader.contains(on.header()[index]))
         .toArray();
     if (result.length == 0) {
       throw new RequestException("Csv has no unique columns!");
@@ -86,7 +86,7 @@ public class JoinRequest extends AbstractRequest<CSV> {
       Objects.requireNonNull(from);
       Objects.requireNonNull(on);
       Objects.requireNonNull(by);
-      return new JoinRequest(on, from, by);
+      return new JoinRequest(from, on, by);
     }
   }
 
