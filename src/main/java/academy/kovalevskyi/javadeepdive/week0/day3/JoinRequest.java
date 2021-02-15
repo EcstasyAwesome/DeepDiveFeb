@@ -45,7 +45,7 @@ public class JoinRequest extends AbstractRequest<CSV> {
     return result;
   }
 
-  private static String[] join(final String[] target, final String[] from, final int[] columns) {
+  private String[] join(final String[] target, final String[] from, final int[] columns) {
     final var result = new String[target.length + columns.length];
     System.arraycopy(target, 0, result, 0, target.length);
     var resultIndex = target.length;
