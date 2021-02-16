@@ -50,26 +50,25 @@ public class StdBufferedReader implements Closeable {
    * @throws IOException if an I/O error occurs
    */
   public char[] readLine() throws IOException {
-    while (true) {
-      if (emptyBuffer) {
-        if (reader.ready()) {
-          readBytes = reader.read(buffer, 0, buffer.length);
-          ready = true;
-          lastLineSeparator = 0;
-        } else {
-          ready = false;
-          return storage == null ? new char[]{} : storage;
-        }
+    if (emptyBuffer) {
+      readBytes = reader.read(buffer, 0, buffer.length);
+      if (readBytes > 0) {
+        ready = true;
+        lastLineSeparator = 0;
+      } else {
+        ready = false;
+        return storage == null ? new char[]{} : storage;
       }
-      for (var to = lastLineSeparator; to < readBytes; to++) {
-        if (buffer[to] == '\n') {
-          return prepareLine(to);
-        }
-      }
-      emptyBuffer = true;
-      var tmpArray = copyArray(buffer, lastLineSeparator, readBytes);
-      storage = storage == null ? tmpArray : mergeArray(storage, tmpArray);
     }
+    for (var to = lastLineSeparator; to < readBytes; to++) {
+      if (buffer[to] == '\n') {
+        return prepareLine(to);
+      }
+    }
+    emptyBuffer = true;
+    var tmpArray = copyArray(buffer, lastLineSeparator, readBytes);
+    storage = storage == null ? tmpArray : mergeArray(storage, tmpArray);
+    return readLine();
   }
 
   private char[] prepareLine(final int to) {
