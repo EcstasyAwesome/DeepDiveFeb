@@ -37,12 +37,12 @@ public class HttpRequestsHandler implements Runnable {
 
   private void read(final InputStream inputStream) throws IOException {
     var reader = new StdBufferedReader(new InputStreamReader(inputStream));
-    var requestBuilder = new StringBuilder();
+    var result = new StringBuilder();
     String line;
     while (!(line = reader.line()).isBlank()) {
-      requestBuilder.append(line).append("\r\n");
+      result.append(line).append("\r\n");
     }
-    System.out.println(requestBuilder);
+    System.out.println(result);
   }
 
   private void write(final OutputStream output) throws IOException {
