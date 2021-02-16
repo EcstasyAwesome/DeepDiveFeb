@@ -6,22 +6,7 @@ import java.util.Scanner;
 
 public class HttpServer implements Runnable {
 
-  private volatile boolean live = true;
-
-  public static void main(String[] args) {
-    var server = new HttpServer();
-    var thread = new Thread(server);
-    thread.start();
-    try (var scanner = new Scanner(System.in)) {
-      while (scanner.hasNext()) {
-        var text = scanner.next();
-        if (text.equalsIgnoreCase("stop")) {
-          server.stop();
-          break;
-        }
-      }
-    }
-  }
+  protected volatile boolean live = true;
 
   @Override
   public void run() {
