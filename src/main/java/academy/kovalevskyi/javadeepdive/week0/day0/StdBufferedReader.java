@@ -91,6 +91,18 @@ public class StdBufferedReader implements Closeable {
     }
   }
 
+  /**
+   * Reads a line of text. A line is considered to be terminated by any one of a line feed ('\n'), a
+   * carriage return ('\r'), a carriage return followed immediately by a line feed, or by reaching
+   * the end-of-file (EOF).
+   *
+   * @return text line
+   * @throws IOException if an I/O error occurs
+   */
+  public String line() throws IOException {
+    return String.valueOf(readLine());
+  }
+
   private char[] copyArray(final char[] buffer, final int from, final int to) {
     final var result = new char[to - from];
     System.arraycopy(buffer, from, result, 0, result.length);
