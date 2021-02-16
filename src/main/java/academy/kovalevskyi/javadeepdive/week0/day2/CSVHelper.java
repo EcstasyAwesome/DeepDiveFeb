@@ -38,7 +38,7 @@ public class CSVHelper {
     try (final var buffReader = new StdBufferedReader(reader)) {
       var readHeader = false;
       while (buffReader.hasNext()) {
-        var text = String.valueOf(buffReader.readLine());
+        var text = buffReader.line();
         if (text.trim().isEmpty()) {
           continue;
         }
