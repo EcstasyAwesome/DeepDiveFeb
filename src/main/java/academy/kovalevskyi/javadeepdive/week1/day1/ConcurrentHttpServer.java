@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ConcurrentHttpServer extends HttpServer implements Runnable {
+public class ConcurrentHttpServer extends HttpServer {
 
   private final ExecutorService executorService;
 
