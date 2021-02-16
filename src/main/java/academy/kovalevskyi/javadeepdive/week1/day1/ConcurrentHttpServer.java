@@ -19,9 +19,7 @@ public class ConcurrentHttpServer extends HttpServer implements Runnable {
   public void run() {
     try (var serverSocket = new ServerSocket(8080)) {
       while (live) {
-        try (var socket = serverSocket.accept()) {
-          executorService.submit(new HttpRequestsHandler(socket));
-        }
+        executorService.submit(new HttpRequestsHandler(serverSocket.accept()));
       }
     } catch (IOException exception) {
       exception.printStackTrace();
