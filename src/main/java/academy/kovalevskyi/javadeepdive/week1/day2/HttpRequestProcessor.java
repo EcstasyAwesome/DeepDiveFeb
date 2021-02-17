@@ -10,17 +10,21 @@ import java.util.List;
 public record HttpRequestProcessor(Socket socket, List<HttpRequestsHandler> handlers) implements
     Runnable, Closeable {
 
+  public void execute() throws IOException {
+    final var request = parse();
+    for (var handler : handlers) {
+      if (handler.path().equals(request.path()) && handler.method() == request.method()) {
+        send(handler.process(request));
+        return;
+      }
+    }
+    send(HttpResponse.ERROR_404);
+  }
+
   @Override
   public void run() {
     try (this) {
-      final var request = parse();
-      for (var handler : handlers) {
-        if (handler.path().equals(request.path()) && handler.method() == request.method()) {
-          send(handler.process(request));
-          return;
-        }
-      }
-      send(HttpResponse.ERROR_404);
+      execute();
     } catch (IOException exception) {
       exception.printStackTrace();
     }

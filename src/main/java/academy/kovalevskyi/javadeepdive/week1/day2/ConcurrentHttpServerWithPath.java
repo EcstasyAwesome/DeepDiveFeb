@@ -23,27 +23,6 @@ public class ConcurrentHttpServerWithPath extends Thread {
     handlers.add(handler);
   }
 
-  public static void main(String[] args) {
-    var serverThread = new ConcurrentHttpServerWithPath();
-    serverThread.addHandler(new HttpRequestsHandler() {
-      @Override
-      public String path() {
-        return "/hi";
-      }
-
-      @Override
-      public HttpMethod method() {
-        return HttpMethod.GET;
-      }
-
-      @Override
-      public HttpResponse process(HttpRequest request) {
-        return new HttpResponse.Builder().body("<h1>HI!</h1>").build();
-      }
-    });
-    serverThread.start();
-  }
-
   public void run() {
     try (var serverSocket = new ServerSocket(8080)) {
       while (live) {
