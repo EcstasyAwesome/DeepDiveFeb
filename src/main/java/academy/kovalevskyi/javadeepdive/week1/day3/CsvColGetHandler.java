@@ -11,7 +11,6 @@ import academy.kovalevskyi.javadeepdive.week1.day2.HttpResponse;
 
 public class CsvColGetHandler implements HttpRequestsHandler {
 
-
   private final CSV csv;
   private final String colName;
   private final String path;
