@@ -33,7 +33,7 @@ public class JsonHelper {
 
   public static <T> T fromJsonString(String json, Class<T> cls) throws NoSuchMethodException,
       IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
-    final var pattern = Pattern.compile("^\\s*(\".+\"\\s*:\\s*.+)\\s*\\s*$");
+    final var pattern = Pattern.compile("^\\s*(\".+\"\\s*:\\s*.+)\\s*$");
     final var jsonEntries = json.trim().substring(1, json.length() - 1).split(",");
     final var result = cls.getConstructor().newInstance();
     for (var entry : jsonEntries) {
