@@ -32,22 +32,22 @@ public class JsonHelper {
   public static <T> T fromJsonString(String json, Class<T> cls) throws NoSuchMethodException,
       IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
     final var pattern = Pattern.compile("^\\{\\s*(\".+\"\\s*:\\s*.+)\\s*}\\s*$");
-    final var splits = json.substring(1, json.length() - 2).split(",");
-    var obj = cls.getConstructor().newInstance();
-    for (var entry : splits) {
+    final var jsonEntries = json.substring(1, json.length() - 2).split(",");
+    final var result = cls.getConstructor().newInstance();
+    for (var entry : jsonEntries) {
       final var matcher = pattern.matcher(entry);
       if (matcher.find()) {
-        var result = matcher.group(1).split(":");
-        var field = obj.getClass().getDeclaredField(result[0].trim().replaceAll("\"", ""));
+        var splits = matcher.group(1).split(":");
+        var field = result.getClass().getDeclaredField(splits[0].trim().replaceAll("\"", ""));
         field.setAccessible(true);
         if (field.getType().equals(String.class)) {
-          field.set(obj, result[1].trim().substring(1, result[1].length() - 2));
+          field.set(result, splits[1].trim().substring(1, splits[1].length() - 2));
         } else {
-          field.set(obj, Integer.parseInt(result[1].trim()));
+          field.set(result, Integer.parseInt(splits[1].trim()));
         }
       }
     }
-    return obj;
+    return result;
   }
 
   private static String fieldToJsonEntry(final Field field) {
