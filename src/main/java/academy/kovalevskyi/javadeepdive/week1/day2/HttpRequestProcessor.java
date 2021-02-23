@@ -7,8 +7,15 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.List;
 
-public record HttpRequestProcessor(Socket socket, List<HttpRequestsHandler> handlers) implements
-    Runnable, Closeable {
+public class HttpRequestProcessor implements Runnable, Closeable {
+
+  private final Socket socket;
+  private final List<HttpRequestsHandler> handlers;
+
+  public HttpRequestProcessor(Socket socket, List<HttpRequestsHandler> handlers) {
+    this.socket = socket;
+    this.handlers = handlers;
+  }
 
   public void execute() throws IOException {
     final var request = parse();

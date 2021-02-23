@@ -14,19 +14,23 @@ public class ConcurrentHttpServerWithPath extends Thread {
   private volatile boolean live;
 
   public ConcurrentHttpServerWithPath() {
-    live = true;
-    executor = Executors.newCachedThreadPool();
-    handlers = new CopyOnWriteArrayList<>();
+    this.live = true;
+    this.executor = Executors.newCachedThreadPool();
+    this.handlers = new CopyOnWriteArrayList<>();
   }
 
   public void addHandler(HttpRequestsHandler handler) {
-    handlers.add(handler);
+    this.handlers.add(handler);
+  }
+
+  public void addHandlers(List<HttpRequestsHandler> handlers) {
+    this.handlers.addAll(handlers);
   }
 
   public void run() {
     try (var serverSocket = new ServerSocket(8080)) {
       while (live) {
-        executor.submit(new HttpRequestProcessor(serverSocket.accept(), handlers));
+        this.executor.submit(new HttpRequestProcessor(serverSocket.accept(), this.handlers));
       }
     } catch (IOException exception) {
       exception.printStackTrace();
@@ -34,10 +38,10 @@ public class ConcurrentHttpServerWithPath extends Thread {
   }
 
   public void stopServer() {
-    live = false;
+    this.live = false;
   }
 
   public boolean isLive() {
-    return live;
+    return this.live;
   }
 }
