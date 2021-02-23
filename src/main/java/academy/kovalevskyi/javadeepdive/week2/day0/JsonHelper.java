@@ -74,15 +74,14 @@ public class JsonHelper {
     final var length = Array.getLength(obj);
     final var builder = new StringBuilder();
     builder.append('[');
-    for (var index = 0; index < length; index++) {
-      builder.append(valueToJsonEntry(Array.get(obj, index))).append(',');
-    }
     if (length > 0) {
+      for (var index = 0; index < length; index++) {
+        builder.append(valueToJsonEntry(Array.get(obj, index))).append(',');
+      }
       builder.setCharAt(builder.length() - 1, ']');
     } else {
       builder.append(']');
     }
-
     return builder.toString();
   }
 
