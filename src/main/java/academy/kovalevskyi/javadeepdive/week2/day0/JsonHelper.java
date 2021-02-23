@@ -15,19 +15,23 @@ public class JsonHelper {
       return valueToJsonEntry(target);
     }
     final var builder = new StringBuilder();
-    builder.append('{');
-    for (var field : target.getClass().getDeclaredFields()) {
-      field.setAccessible(true);
-      var obj = field.get(target);
-      builder.append(fieldToJsonEntry(field));
-      if (obj.getClass().isArray()) {
-        builder.append(arrayValuesToJsonEntry(obj));
-      } else {
-        builder.append(valueToJsonEntry(obj));
+    if (target.getClass().isArray()) {
+      builder.append(arrayValuesToJsonEntry(target));
+    } else {
+      builder.append('{');
+      for (var field : target.getClass().getDeclaredFields()) {
+        field.setAccessible(true);
+        var obj = field.get(target);
+        builder.append(fieldToJsonEntry(field));
+        if (obj.getClass().isArray()) {
+          builder.append(arrayValuesToJsonEntry(obj));
+        } else {
+          builder.append(valueToJsonEntry(obj));
+        }
+        builder.append(',');
       }
-      builder.append(',');
+      builder.setCharAt(builder.length() - 1, '}');
     }
-    builder.setCharAt(builder.length() - 1, '}');
     return builder.toString();
   }
 
@@ -67,12 +71,18 @@ public class JsonHelper {
   }
 
   private static String arrayValuesToJsonEntry(final Object obj) {
+    final var length = Array.getLength(obj);
     final var builder = new StringBuilder();
     builder.append('[');
-    for (var index = 0; index < Array.getLength(obj); index++) {
+    for (var index = 0; index < length; index++) {
       builder.append(valueToJsonEntry(Array.get(obj, index))).append(',');
     }
-    builder.setCharAt(builder.length() - 1, ']');
+    if (length > 0) {
+      builder.setCharAt(builder.length() - 1, ']');
+    } else {
+      builder.append(']');
+    }
+
     return builder.toString();
   }
 

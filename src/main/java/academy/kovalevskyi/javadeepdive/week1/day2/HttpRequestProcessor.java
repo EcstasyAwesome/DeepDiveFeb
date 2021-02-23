@@ -53,9 +53,11 @@ public class HttpRequestProcessor implements Runnable, Closeable {
   private HttpRequest parse() throws IOException {
     final var reader = new StdBufferedReader(new InputStreamReader(socket.getInputStream()));
     final var request = reader.line().trim().split(" ");
+    final var body = reader.line().trim();
     return new HttpRequest.Builder()
         .method(HttpMethod.valueOf(request[0]))
         .path(request[1])
+        .body(body)
         .httpVersion(HttpVersion.HTTP_1_1)
         .build();
   }
