@@ -35,8 +35,15 @@ public class JsonHelper {
     return builder.toString();
   }
 
+  @SuppressWarnings("unchecked")
   public static <T> T fromJsonString(String json, Class<T> cls) throws NoSuchMethodException,
       IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
+    if (json == null || json.equals("null") || json.isBlank()) {
+      if (cls.isArray()) {
+        return (T) Array.newInstance(cls.getComponentType(), 0);
+      }
+      return null;
+    }
     final var pattern = Pattern.compile("^\\s*(\".+\"\\s*:\\s*.+)\\s*$");
     final var jsonEntries = json.trim().substring(1, json.length() - 1).split(",");
     final var result = cls.getConstructor().newInstance();

@@ -1,6 +1,7 @@
 package academy.kovalevskyi.javadeepdive.week2.day1;
 
 import academy.kovalevskyi.javadeepdive.week1.day2.ConcurrentHttpServerWithPath;
+import academy.kovalevskyi.javadeepdive.week1.day2.ContentType;
 import academy.kovalevskyi.javadeepdive.week1.day2.HttpMethod;
 import academy.kovalevskyi.javadeepdive.week1.day2.HttpRequest;
 import academy.kovalevskyi.javadeepdive.week1.day2.HttpRequestsHandler;
@@ -68,10 +69,10 @@ public class RestServer extends ConcurrentHttpServerWithPath {
           if (method.isAnnotationPresent(Post.class)) {
             var body = request.body().orElse("");
             method.invoke(obj, JsonHelper.fromJsonString(body, method.getParameterTypes()[0]));
-            return HttpResponse.OK_200;
+            return new HttpResponse.Builder().body("<h1>Successfully!</h1>").build();
           } else {
             return new HttpResponse.Builder()
-                .contentType(request.type())
+                .contentType(ContentType.APPLICATION_JSON)
                 .body(JsonHelper.toJsonString(method.invoke(obj)))
                 .build();
           }
