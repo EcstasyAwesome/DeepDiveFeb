@@ -69,7 +69,7 @@ public class RestServer extends ConcurrentHttpServerWithPath {
           if (method.isAnnotationPresent(Post.class)) {
             var body = request.body().orElse("");
             method.invoke(obj, JsonHelper.fromJsonString(body, method.getParameterTypes()[0]));
-            return new HttpResponse.Builder().body("<h1>Successfully!</h1>").build();
+            return HttpResponse.OK_200;
           } else {
             return new HttpResponse.Builder()
                 .contentType(ContentType.APPLICATION_JSON)
