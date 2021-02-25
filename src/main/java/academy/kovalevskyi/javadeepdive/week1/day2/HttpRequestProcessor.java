@@ -1,11 +1,12 @@
 package academy.kovalevskyi.javadeepdive.week1.day2;
 
-import academy.kovalevskyi.javadeepdive.week0.day0.StdBufferedReader;
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class HttpRequestProcessor implements Runnable, Closeable {
 
@@ -51,13 +52,22 @@ public class HttpRequestProcessor implements Runnable, Closeable {
   }
 
   private HttpRequest parse() throws IOException {
-    final var reader = new StdBufferedReader(new InputStreamReader(socket.getInputStream()));
-    final var request = reader.line().trim().split(" ");
-    final var body = reader.line().trim();
+    final var reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    final var joiner = new StringJoiner("\n");
+    var headerLine = (String) null;
+    while (!(headerLine = reader.readLine()).isEmpty()) {
+      joiner.add(headerLine);
+    }
+    final var headers = joiner.toString().split("\n");
+    final var firstLine = headers[0].split(" ");
+    final var body = new StringBuilder();
+    while (reader.ready()) {
+      body.append((char) reader.read());
+    }
     return new HttpRequest.Builder()
-        .method(HttpMethod.valueOf(request[0]))
-        .path(request[1])
-        .body(body)
+        .method(HttpMethod.valueOf(firstLine[0]))
+        .path(firstLine[1])
+        .body(body.toString())
         .httpVersion(HttpVersion.HTTP_1_1)
         .build();
   }
