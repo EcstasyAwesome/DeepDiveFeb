@@ -40,6 +40,7 @@ public class SelectRequest extends AbstractRequest<String[][]> {
   }
 
   private int[] columns() throws RequestException {
+    final var columns = Objects.requireNonNullElse(this.columns, csv.header());
     final var result = new int[columns.length];
     for (var index = 0; index < result.length; index++) {
       result[index] = getColumnId(csv, columns[index]);
@@ -78,7 +79,6 @@ public class SelectRequest extends AbstractRequest<String[][]> {
 
     public SelectRequest build() {
       Objects.requireNonNull(csv);
-      Objects.requireNonNull(columns);
       return new SelectRequest(csv, selector, columns);
     }
   }
