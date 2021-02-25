@@ -2,7 +2,6 @@ package academy.kovalevskyi.javadeepdive.week2.day0;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Pattern;
 
 public class JsonHelper {
@@ -36,29 +35,42 @@ public class JsonHelper {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> T fromJsonString(String json, Class<T> cls) throws NoSuchMethodException,
-      IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
-    if (json == null || json.equals("null") || json.isBlank()) {
-      if (cls.isArray()) {
-        return (T) Array.newInstance(cls.getComponentType(), 0);
-      }
+  public static <T> T fromJsonString(String json, Class<T> cls) throws Exception {
+    if (json == null || json.matches("^\\s*((\\{\\s*})|(null))*\\s*$")) {
       return null;
     }
-    final var pattern = Pattern.compile("^\\s*(\".+\"\\s*:\\s*.+)\\s*$");
-    final var jsonEntries = json.trim().substring(1, json.length() - 1).split(",");
-    final var result = cls.getConstructor().newInstance();
-    for (var entry : jsonEntries) {
-      final var matcher = pattern.matcher(entry);
-      if (matcher.find()) {
-        var splits = matcher.group(1).split(":");
-        var fieldItem = splits[0].trim().replaceAll("\"", "");
-        var valueItem = splits[1].trim().replaceAll("\"", "");
-        var field = result.getClass().getDeclaredField(fieldItem);
-        field.setAccessible(true);
-        if (field.getType().equals(String.class)) {
-          field.set(result, valueItem);
+    if (cls.isArray() && json.matches("^\\s*\\[\\s*]\\s*$")) {
+      return (T) Array.newInstance(cls.getComponentType(), 0);
+    }
+    final var jsonTrimmed = json.trim();
+    final var jsonEntries = jsonTrimmed.substring(1, jsonTrimmed.length() - 1).split(",");
+    var result = (T) null;
+    if (cls.isArray()) {
+      result = (T) Array.newInstance(cls.getComponentType(), jsonEntries.length);
+      for (var index = 0; index < jsonEntries.length; index++) {
+        var value = jsonEntries[index].trim().replaceAll("\"", "");
+        if (cls.getComponentType().equals(String.class)) {
+          Array.set(result, index, value);
         } else {
-          field.set(result, Integer.parseInt(valueItem));
+          Array.set(result, index, Integer.parseInt(value));
+        }
+      }
+    } else {
+      result = cls.getConstructor().newInstance();
+      final var pattern = Pattern.compile("^\\s*(\".+\"\\s*:\\s*.+)\\s*$");
+      for (var entry : jsonEntries) {
+        final var matcher = pattern.matcher(entry);
+        if (matcher.find()) {
+          var splits = matcher.group(1).split(":");
+          var fieldItem = splits[0].trim().replaceAll("\"", "");
+          var valueItem = splits[1].trim().replaceAll("\"", "");
+          var field = result.getClass().getDeclaredField(fieldItem);
+          field.setAccessible(true);
+          if (field.getType().equals(String.class)) {
+            field.set(result, valueItem);
+          } else {
+            field.set(result, Integer.parseInt(valueItem));
+          }
         }
       }
     }
