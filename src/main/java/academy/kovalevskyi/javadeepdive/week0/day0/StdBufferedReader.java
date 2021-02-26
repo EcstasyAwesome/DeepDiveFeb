@@ -52,12 +52,12 @@ public class StdBufferedReader implements Closeable {
   public char[] readLine() throws IOException {
     if (emptyBuffer) {
       readBytes = reader.read(buffer, 0, buffer.length);
-      if (readBytes > 0) {
+      if (readBytes == -1) {
+        ready = false;
+        return Objects.requireNonNullElse(storage, new char[]{});
+      } else {
         ready = true;
         lastLineSeparator = 0;
-      } else {
-        ready = false;
-        return storage == null ? new char[]{} : storage;
       }
     }
     for (var to = lastLineSeparator; to < readBytes; to++) {

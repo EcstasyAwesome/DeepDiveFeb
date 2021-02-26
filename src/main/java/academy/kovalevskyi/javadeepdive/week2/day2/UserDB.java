@@ -33,7 +33,8 @@ public class UserDB {
     var result = new SelectRequest.Builder()
         .from(csv)
         .where(new Selector.Builder().fieldName("mail").value(mail).build())
-        .build().execute();
+        .build()
+        .execute();
     if (result.length == 0) {
       return Optional.empty();
     }
